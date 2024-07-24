@@ -33,6 +33,7 @@ function Viewer({ autoRotate, cameraPosition }) {
     const [pbrMaterialList, setPbrMaterialList] = useState({});
     const [textureReady, setIstextureready]=useState(false);
     const [modelUploaded, setModelUploaded] = useState(false); // New state
+    const [fileSize, setFileSize] = useState(0); // New state
 
 
     const prepareLighting = (scene) => {
@@ -141,6 +142,9 @@ function Viewer({ autoRotate, cameraPosition }) {
         const file = event.target.files ? event.target.files[0] : event.dataTransfer.files[0];
         if (file && scene) {
             const fileUrl = URL.createObjectURL(file);
+            const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2); // Calculate file size in MB
+            setFileSize(fileSizeMB); // Set the file size
+            console.log("fileSIze",fileSizeMB);
             const filesInput = new FilesInput(engine, scene, (_, newScene) => {
                 prepareCamera(newScene);
                 prepareLighting(newScene);
@@ -234,8 +238,10 @@ function Viewer({ autoRotate, cameraPosition }) {
                     <p>Upload your Model to view them and change material on them</p>
                     </div>:null}
                     <input className="glb-input" type="file" accept=".glb, .gltf" onChange={handleFileUpload} />
+                   
                 </div>
                 <div className="sidebar">
+                {modelUploaded && <p className="text-xl font-bold">Model Size: {fileSize} MB</p>}
                     <h2>Meshes</h2>
                     <ul>
                         {mesh.map((mesh, index) => (
